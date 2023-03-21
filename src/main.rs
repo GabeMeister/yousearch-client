@@ -1,3 +1,4 @@
+use gloo_console::{__macro::JsValue, log};
 use yew::prelude::*;
 
 #[function_component(YouSearch)]
@@ -7,6 +8,8 @@ fn gabe_state() -> Html {
         let counter = counter.clone();
         Callback::from(move |_| counter.set(*counter + 1))
     };
+
+    log!(JsValue::from("This is a test string!"));
 
     html! {
         <div>
@@ -26,6 +29,8 @@ fn gabe_state() -> Html {
 
 #[function_component(App)]
 fn app() -> Html {
+    log!(JsValue::from("This is a test string! 1"));
+
     html! {
         <div class="p-6">
             <h1>{ "Welcome to YouSearch!" }</h1>

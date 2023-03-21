@@ -864,5 +864,6 @@ dependencies = [
 name = "yousearch-client"
 version = "0.1.0"
 dependencies = [
+ "gloo-console",
  "yew",
 ]
