@@ -1,5 +1,14 @@
 use gloo_console::{__macro::JsValue, log};
+use gloo_net::http::Request;
+use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
+
+async fn print_response(url: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let response = Request::get(url).send().await?;
+    let text = response.text().await?;
+    log!("{}", JsValue::from(text));
+    Ok(())
+}
 
 #[function_component(YouSearch)]
 fn gabe_state() -> Html {
@@ -9,7 +18,17 @@ fn gabe_state() -> Html {
         Callback::from(move |_| counter.set(*counter + 1))
     };
 
-    log!(JsValue::from("This is a test string!"));
+    // https://gabemeister-yousearch.shuttleapp.rs/hello
+    // https://ron-swanson-quotes.herokuapp.com/v2/quotes
+    use_effect_with_deps(
+        move |_| {
+            spawn_local(async move {
+                let _ = print_response("https://ron-swanson-quotes.herokuapp.com/v2/quotes").await;
+                // let _ = print_response("https://gabemeister-yousearch.shuttleapp.rs/hello").await;
+            })
+        },
+        (),
+    );
 
     html! {
         <div>
@@ -29,8 +48,6 @@ fn gabe_state() -> Html {
 
 #[function_component(App)]
 fn app() -> Html {
-    log!(JsValue::from("This is a test string! 1"));
-
     html! {
         <div class="p-6">
             <h1>{ "Welcome to YouSearch!" }</h1>
