@@ -23,8 +23,9 @@ fn gabe_state() -> Html {
     use_effect_with_deps(
         move |_| {
             spawn_local(async move {
-                let _ = print_response("https://ron-swanson-quotes.herokuapp.com/v2/quotes").await;
-                // let _ = print_response("https://gabemeister-yousearch.shuttleapp.rs/hello").await;
+                // let _ = print_response("https://ron-swanson-quotes.herokuapp.com/v2/quotes").await;
+                let _ = print_response("https://gabemeister-yousearch.shuttleapp.rs/hello").await;
+                // let _ = print_response("http://127.0.0.1:8000/hello").await;
             })
         },
         (),
