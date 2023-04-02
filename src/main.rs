@@ -1,13 +1,17 @@
 use gloo_console::{__macro::JsValue, log};
 use gloo_net::http::Request;
+use std::env;
 use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
 
-async fn print_response(url: &str) -> Result<(), Box<dyn std::error::Error>> {
+const RUST_ENV: &str = env!("RUST_ENV");
+const BACKEND_API: &str = env!("BACKEND_API");
+
+async fn fetch(url: &str) -> Result<String, Box<dyn std::error::Error>> {
     let response = Request::get(url).send().await?;
     let text = response.text().await?;
-    log!("{}", JsValue::from(text));
-    Ok(())
+
+    Ok(text)
 }
 
 #[function_component(YouSearch)]
@@ -18,14 +22,20 @@ fn gabe_state() -> Html {
         Callback::from(move |_| counter.set(*counter + 1))
     };
 
-    // https://gabemeister-yousearch.shuttleapp.rs/hello
+    // https://gabemeister-rocket-rust-hello-world.onrender.com
     // https://ron-swanson-quotes.herokuapp.com/v2/quotes
     use_effect_with_deps(
         move |_| {
             spawn_local(async move {
-                // let _ = print_response("https://ron-swanson-quotes.herokuapp.com/v2/quotes").await;
-                let _ = print_response("https://gabemeister-yousearch.shuttleapp.rs/hello").await;
-                // let _ = print_response("http://127.0.0.1:8000/hello").await;
+                // let result = fetch("https://ron-swanson-quotes.herokuapp.com/v2/quotes").await;
+                let result = fetch(BACKEND_API).await;
+                // let result =
+                //     fetch("https://gabemeister-rocket-rust-hello-world.onrender.com/").await;
+
+                match result {
+                    Ok(text) => log!(JsValue::from(&text)),
+                    Err(_) => log!("Failed to fetch"),
+                }
             })
         },
         (),
@@ -51,7 +61,8 @@ fn gabe_state() -> Html {
 fn app() -> Html {
     html! {
         <div class="p-6">
-            <h1>{ "Welcome to YouSearch!" }</h1>
+            <h1>{ BACKEND_API }</h1>
+            <h1>{ RUST_ENV }</h1>
             <YouSearch />
         </div>
     }

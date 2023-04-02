@@ -2,11 +2,13 @@
 
 if [ "$1" = "build" ]; then
   npx tailwindcss -c ./tailwind.config.js -i ./styles/input.css -o ./styles/output.css --minify
-  trunk build --release --public-url yousearch-client/ --dist docs
+  BACKEND_API="https://gabemeister-rocket-rust-hello-world.onrender.com" RUST_ENV=production trunk build --release --public-url yousearch-client/ --dist docs
 elif [ "$1" = "dev" ]; then
-  trunk serve -d docs
+  BACKEND_API="http://0.0.0.0:8000" RUST_ENV=development trunk serve --open
+elif [ "$1" = "run" ]; then
+  BACKEND_API="https://gabemeister-rocket-rust-hello-world.onrender.com" RUST_ENV=production trunk serve --release --dist docs
 elif [ "$1" = "tailwind" ]; then
   npx tailwindcss -w -c ./tailwind.config.js -i ./styles/input.css -o ./styles/output.css
 else
-  echo "Usage: $0 [build|watch|dev]"
+  echo "Usage: $0 [build|dev|tailwind]"
 fi
