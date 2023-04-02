@@ -6,7 +6,7 @@ if [ "$1" = "build" ]; then
 elif [ "$1" = "dev" ]; then
   BACKEND_API="http://0.0.0.0:8000" RUST_ENV=development trunk serve --open
 elif [ "$1" = "run" ]; then
-  BACKEND_API="https://gabemeister-rocket-rust-hello-world.onrender.com" RUST_ENV=production trunk serve --release --dist docs
+  BACKEND_API="https://gabemeister-rocket-rust-hello-world.onrender.com" RUST_ENV=production trunk serve --release --public-url yousearch-client/ --dist docs
 elif [ "$1" = "tailwind" ]; then
   npx tailwindcss -w -c ./tailwind.config.js -i ./styles/input.css -o ./styles/output.css
 else
