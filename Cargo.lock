@@ -867,6 +867,8 @@ dependencies = [
  "gloo-console",
  "gloo-net",
  "serde",
+ "wasm-bindgen",
  "wasm-bindgen-futures",
+ "web-sys",
  "yew",
 ]
