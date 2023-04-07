@@ -1,14 +1,12 @@
 mod utils;
 
-use gloo_console::log;
+use gloo_console::{__macro::JsValue, log};
 use gloo_net::http::Request;
+use gloo_net::Error;
 use std::env;
 use utils::inputs;
 use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
-// use gloo_console::{__macro::JsValue, log};
-// use gloo_net::http::Request;
-// use gloo_net::Error;
 
 // use yew::suspense::{Suspension, SuspensionResult};
 
@@ -68,65 +66,30 @@ const BACKEND_API: &str = env!("BACKEND_API");
 
 #[function_component(YouSearch)]
 fn yousearch_component() -> Html {
-    // let fallback = html! {<div>{"Loading..."}</div>};
-    let counter = use_state(|| 0);
-    let random_text = use_state(|| "default text".to_string());
     let header_text = use_state(|| "This is the Default Header".to_string());
-
-    let onclick = {
-        let counter = counter.clone();
-        Callback::from(move |_| counter.set(*counter + 1))
-    };
-
-    let on_text_change = {
-        let random_text_clone = random_text.clone();
-
-        Callback::from(move |event: KeyboardEvent| {
-            let value = inputs::get_keyboard_input_value(event);
-            random_text_clone.set(value);
-        })
-    };
+    let header_text_clone = header_text.clone();
 
     let on_btn_click = {
-        let header_text_clone = header_text.clone();
-
-        async fn my_async_fn() -> String {
-            let res = Request::get("https://gabemeister-rocket-rust-hello-world.onrender.com")
-                .send()
-                .await
-                .unwrap();
-
-            res.text().await.unwrap()
-        }
-
         Callback::from(move |_| {
-            spawn_local(async {
-                let data = my_async_fn().await;
+            let header_text_clone2 = header_text_clone.clone();
 
-                // TODO: figure out how to set state here
-                log!(&data);
+            spawn_local(async move {
+                let url = "https://gabemeister-rocket-rust-hello-world.onrender.com";
+                let data = Request::get(url)
+                    .send()
+                    .await
+                    .unwrap()
+                    .text()
+                    .await
+                    .unwrap();
+
+                header_text_clone2.set(data);
             });
         })
     };
 
     html! {
         <div>
-            <button
-                class="border-2 border-black rounded-md py-1 px-2"
-                {onclick}
-            >
-                {"Add +1"}
-            </button>
-            <p>
-                <b class="text-blue-400">{ "Counter: " }</b>
-                { *counter }
-            </p>
-            <input
-                type="text"
-                placeholder="Enter something"
-                class="border-2 border-gray-500 rounded-lg py-2 px-4"
-                onkeyup={on_text_change}
-            />
             <button
                 class="
                     border-black
@@ -138,11 +101,8 @@ fn yousearch_component() -> Html {
                     bg-blue-300
                     hover:bg-blue-400
                 "
-                onclick={on_btn_click}
+                onclick={on_btn_click.clone()}
             >{"Update Header Text"}</button>
-            <p>{&*random_text}</p>
-            <p>{&*random_text}</p>
-            <p>{&*random_text}</p>
             <h1 class="text-5xl font-bold">{&*header_text}</h1>
             //<Suspense {fallback}>
             //    <Content />
